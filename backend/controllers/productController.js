@@ -11,7 +11,10 @@ exports.addProduct = async (req, res) => {
         const existingProduct = await Product.findOne({ name });
 
         if (existingProduct) {
-            return res.status(409).json({ message: "Product already exists", });
+            return res.status(404).json({ message: "Product already exists", });
+        }
+        if (!req.file) {
+            return res.status(404).json({ message: "Image are Required", });
         }
         const product = await Product.create({
             name,

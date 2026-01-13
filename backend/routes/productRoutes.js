@@ -6,9 +6,12 @@ const upload = require("../middleware/cloudinary")
 const router = express.Router()
 
 router.post("/addProduct", isAuth, isAdmin, upload.single("image"),  addProduct)
-router.get("/getallProduct", isAuth, isAdmin, getall)
-router.get("/getbyId/:id", isAuth, isAdmin, getbyId)
-router.put("/updateProduct/:id", isAuth,upload.single("image"), isAdmin, updateProduct)
+
+// Public endpoints to allow storefront to view products without auth
+router.get("/getallProduct", getall)
+router.get("/getbyId/:id", getbyId)
+
+router.put("/updateProduct/:id", isAuth, upload.single("image"), isAdmin, updateProduct)
 router.delete("/deleteProduct/:id", isAuth, isAdmin, deleteProduct)
 
 module.exports = router

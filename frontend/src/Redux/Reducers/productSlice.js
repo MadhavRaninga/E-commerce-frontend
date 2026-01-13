@@ -7,7 +7,7 @@ export const getProducts = createAsyncThunk(
     "products/getallProduct",
     async (_, thunkAPI) => {
         try {
-            const response = await axios.get(
+            const response = await axios.get(   
                 `${baseURL}/api/products/getallProduct`);
 
                 console.log("🔥 BACKEND RESPONSE:", response.data);
@@ -15,7 +15,7 @@ export const getProducts = createAsyncThunk(
 
         } catch (error) {
             return thunkAPI.rejectWithValue(
-                error.response?.data?.message
+                error?.response?.data?.message || "all product not get"
             );
         }
     }
@@ -36,7 +36,8 @@ const productSlice = createSlice({
             })
             .addCase(getProducts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = action.payload;
+                // backend responds with { success, products }
+                state.products = action.payload?.products || [];
             })
             .addCase(getProducts.rejected, (state, action) => {
                 state.loading = false;

@@ -12,6 +12,7 @@ const Homepage = () => {
   useEffect(() => {
     dispatch(getProducts())
   }, [dispatch])
+
   return (
     <div className="bg-[#FAF9F6] text-gray-900">
 
@@ -134,8 +135,9 @@ const Homepage = () => {
 
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {products?.length > 0 ? (
+            {products.length !== 0 ? (
               products.map((product) => (
+                
                 <div
                   key={product._id}
                   className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
@@ -161,14 +163,10 @@ const Homepage = () => {
                 No products found
               </p>
             )}
-
           </div>
-
         </div>
       </section>
-
     </div>
   );
 };
-
 export default Homepage;
