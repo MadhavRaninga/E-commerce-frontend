@@ -18,6 +18,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         // default: price * 10 / 100,
     },
+    isNewArrival:{
+        type: Boolean,
+        default: false
+    },
     stock: {
         type: Number,
         required: [true, "Product stock is required"],

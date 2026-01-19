@@ -3,7 +3,7 @@ const upload = require("../middleware/cloudinary")
 const cloudinary = require("../middleware/cloudinary")
 exports.addProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, category, discount } = req.body
+        const { name, description, price, stock, category, discount, isNewArrival } = req.body
 
         if (!name || !description || !price || !stock || !category) {
             return res.status(400).json({ message: "All Fields are Required !" })
@@ -24,6 +24,7 @@ exports.addProduct = async (req, res) => {
             stock,
             image: req.file.path,
             category,
+            isNewArrival
         })
 
         res.status(201).json({ message: "Product Added Successfully.", product })
