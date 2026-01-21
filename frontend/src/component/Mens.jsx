@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import { mensProduct } from "../Redux/Reducers/menSlice";
 import Footer from "./Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Mens = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { products } = useSelector((state) => state.products);
+  const { isAuth } = useSelector((state) => state.user);
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("");
 
@@ -148,7 +151,17 @@ const Mens = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
               {sortedProducts.length > 0 ? (
                 sortedProducts.map((product) => (
-                  <Link key={product._id} to={`/product/${product._id}`}>    
+                  <Link
+                    key={product._id}
+                    to={`/product/${product._id}`}
+                    onClick={(e) => {
+                      if (!isAuth) {
+                        e.preventDefault();
+                        toast.info("Please login first");
+                        navigate("/login");
+                      }
+                    }}
+                  >
                   <div
                     className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition"
                   >

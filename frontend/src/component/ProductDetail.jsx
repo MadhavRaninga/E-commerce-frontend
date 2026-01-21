@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
 import { getProductById } from "../Redux/Reducers/productDetailSlice";
 import { addToCart } from "../Redux/Reducers/cartSlice";
+import { addToWishlist, removeFromWishlist } from "../Redux/Reducers/wishlistSlice";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -13,11 +14,16 @@ const ProductDetails = () => {
     // Local states
     const [quantity, setQuantity] = useState(1)
     const [selectedSize, setSelectedSize] = useState("M")
-    const [isWishlisted, setIsWishlisted] = useState(false)
 
     const { product, error } = useSelector(
         (state) => state.productDetail
     );
+    const { items: wishlistItems = [] } = useSelector((state) => state.wishlist);
+
+    const isWishlisted = useMemo(() => {
+        if (!product?._id) return false;
+        return wishlistItems.some((p) => p._id === product._id);
+    }, [wishlistItems, product?._id]);
 
     useEffect(() => {
         dispatch(getProductById(id));
@@ -40,6 +46,11 @@ const ProductDetails = () => {
     const handleAddToCart = () => {
         dispatch(addToCart({ productId: product._id, quantity }))
     }
+
+    const handleWishlistToggle = () => {
+        if (isWishlisted) dispatch(removeFromWishlist(product._id));
+        else dispatch(addToWishlist(product));
+    };
 
     if (error) {
         return <p className="text-center text-red-500">{error}</p>;
@@ -163,7 +174,7 @@ const ProductDetails = () => {
                         </Link>
                         {/* Wishlist Button (ADDED) */}
                         <button
-                            onClick={() => setIsWishlisted(!isWishlisted)}
+                            onClick={handleWishlistToggle}
                             className={`p-3 rounded-lg border transition duration-200 ${isWishlisted
                                     ? 'border-red-500 text-red-500 bg-red-50'
                                     : 'border-gray-300 text-gray-400 hover:border-red-500 hover:text-red-500 bg-white'

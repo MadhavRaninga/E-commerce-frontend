@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
 import { newArrival } from "../Redux/Reducers/newSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const NewArrivals = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { products = [] } = useSelector((state) => state.products);
+  const { isAuth } = useSelector((state) => state.user);
 
   const [filter, setFilter] = useState("all");
   const [visibleCount, setVisibleCount] = useState(9);
@@ -99,7 +102,17 @@ const NewArrivals = () => {
                 ${item.size === "tall" ? "md:row-span-2" : ""}
               `}
             >
-              <Link to={`/product/${item._id}`} className="block w-full h-full">
+              <Link
+                to={`/product/${item._id}`}
+                className="block w-full h-full"
+                onClick={(e) => {
+                  if (!isAuth) {
+                    e.preventDefault();
+                    toast.info("Please login first");
+                    navigate("/login");
+                  }
+                }}
+              >
               <img
                 src={item.image?.url || item.image}
                 alt={item.title}

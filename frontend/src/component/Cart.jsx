@@ -2,29 +2,34 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     getCart,
     removeCartItem,
-    //   increaseQuantity,
-    //   decreaseQuantity
+    updateCartQuantity
 } from "../Redux/Reducers/cartSlice";
 import Navbar from "../component/Navbar";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const {items} = useSelector((state) => state.cart);
+    const { items } = useSelector((state) => state.cart);
 
     const total = items.reduce(
         (sum, i) =>
-            sum +
-            (i.product.price -
-                (i.product.price * (i.product.discount || 0)) / 100) *
-            i.quantity,
+            sum + ((i.product?.price || 0) - ((i.product?.price || 0) * (i.product?.discount || 0)) / 100) * i.quantity,
         0
     );
 
     useEffect(() => {
         dispatch(getCart())
     }, [dispatch])
+
+    const handleDec = (id, quantity) => {
+        dispatch(updateCartQuantity({ itemId: id, quantity: quantity - 1 }))
+    }
+    const handleInc = (id, quantity) => {
+        dispatch(updateCartQuantity({ itemId: id, quantity: quantity + 1 }))
+    }
 
     return (
         <div className="bg-[#FAF9F6] min-h-screen">
@@ -40,7 +45,7 @@ const Cart = () => {
                         {items.map((item) => (
                             <div
                                 key={item._id}
-                                className="flex gap-6 bg-white p-6 rounded-xl shadow"
+                                className="flex flex-col sm:flex-row gap-6 bg-white p-6 rounded-xl shadow"
                             >
                                 <img
                                     src={item.product.image}
@@ -52,15 +57,14 @@ const Cart = () => {
                                     <h3 className="font-semibold">{item.product.name}</h3>
 
                                     <p className="text-gray-600">
-                                        ₹ {Math.round(item.product.price - (item.product.price * (item.product.discount || 0)) / 100 )}
+                                        ₹ {Math.round(item.product.price - (item.product.price * (item.product.discount || 0)) / 100)}
                                     </p>
 
-                                    <div className="flex items-center gap-4 mt-4">
+                                    <div className="flex flex-wrap items-center gap-4 mt-4">
                                         <button
-                                            //   onClick={() =>
-                                            //     dispatch(decreaseQuantity(item.product._id))
-                                            //   }
-                                            className="px-3 py-1 border"
+                                            disabled={item.quantity === 1}
+                                            onClick={() => handleDec(item._id, item.quantity)}
+                                            className="px-3 py-1 cursor-pointer border disabled:opacity-50"
                                         >
                                             −
                                         </button>
@@ -68,10 +72,8 @@ const Cart = () => {
                                         <span>{item.quantity}</span>
 
                                         <button
-                                            //   onClick={() =>
-                                            //     dispatch(increaseQuantity(item.product._id))
-                                            //   }
-                                            className="px-3 py-1 border"
+                                            onClick={() => handleInc(item._id, item.quantity)}
+                                            className="px-3 cursor-pointer py-1 border"
                                         >
                                             +
                                         </button>
@@ -80,7 +82,7 @@ const Cart = () => {
                                             onClick={() =>
                                                 dispatch(removeCartItem(item._id))
                                             }
-                                            className="ml-6 text-red-600"
+                                            className="sm:ml-6 cursor-pointer text-red-600"
                                         >
                                             Remove
                                         </button>
@@ -95,7 +97,10 @@ const Cart = () => {
                             <h3 className="text-xl font-bold">₹{Math.round(total)}</h3>
                         </div>
 
-                        <button className="w-full bg-black text-white py-4 text-lg hover:bg-gray-900 transition">
+                        <button
+                            onClick={() => navigate("/checkout")}
+                            className="w-full bg-black text-white py-4 text-lg hover:bg-gray-900 transition"
+                        >
                             Proceed to Checkout
                         </button>
                     </div>

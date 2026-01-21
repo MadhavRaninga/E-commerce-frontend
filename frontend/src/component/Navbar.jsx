@@ -1,53 +1,225 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { logout as logoutAction } from "../Redux/Reducers/userSlice";
+import { clearCart, getCart } from "../Redux/Reducers/cartSlice";
+import { clearWishlist, hydrateWishlist } from "../Redux/Reducers/wishlistSlice";
+import { getProducts } from "../Redux/Reducers/productSlice";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // 🛒 get cart items from redux
-  const { items } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Redux data
+  const { products = [] } = useSelector((state) => state.products);
+  const { items: cartItems = [] } = useSelector((state) => state.cart);
+  const { isAuth, user } = useSelector((state) => state.user);
+  const { items: wishlistItems = [] } = useSelector((state) => state.wishlist);
 
   const closeMenu = () => setOpen(false);
+
+  // 🔍 FILTER LOGIC
+  const filteredProducts =
+    search.trim() === ""
+      ? []
+      : products.filter(
+          (product) =>
+            product.name.toLowerCase().includes(search.toLowerCase()) ||
+            product.category?.toLowerCase().includes(search.toLowerCase())
+        );
+
+  const userEmail = user?.email || "";
+
+  useEffect(() => {
+    // Ensure products are loaded once so navbar search works everywhere
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+
+    if (isAuth) {
+      dispatch(getCart());
+      dispatch(hydrateWishlist({ email: userEmail }));
+    } else {
+      dispatch(clearWishlist());
+      dispatch(clearCart());
+    }
+  }, [dispatch, isAuth, userEmail, products?.length]);
+
+  const onProtectedNav = (path) => {
+    if (!isAuth) {
+      toast.info("Please login first");
+      navigate("/login");
+      return;
+    }
+    navigate(path);
+  };
+
+  const onLogout = () => {
+    dispatch(logoutAction());
+    dispatch(clearWishlist());
+    dispatch(clearCart());
+    setUserMenuOpen(false);
+    navigate("/");
+  };
+
+  const filteredProductsSafe = useMemo(() => filteredProducts, [filteredProducts]);
 
   return (
     <header className="border-b border-gray-200 sticky top-0 z-50 bg-[#FAF9F6]">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-        {/* Logo */}
+        {/* LOGO */}
         <Link to="/" className="text-2xl font-bold tracking-widest">
           CLOTHIFY
         </Link>
 
-        {/* Desktop Menu */}
+        {/* DESKTOP MENU */}
         <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
-          <Link to="/mens" className="hover:text-black">Men</Link>
-          <Link to="/womens" className="hover:text-black">Women</Link>
-          <Link to="/kids" className="hover:text-black">Kids</Link>
-          <Link to="/newarrival" className="hover:text-black">New</Link>
-          <Link to="/sale" className="hover:text-black">Sale</Link>
+          <Link to="/mens">Men</Link>
+          <Link to="/womens">Women</Link>
+          <Link to="/kids">Kids</Link>
+          <Link to="/newarrival">New</Link>
+          <Link to="/sale">Sale</Link>
         </nav>
 
-        {/* Desktop Icons */}
-        <div className="hidden md:flex space-x-6 text-xl items-center">
-          <i className="ri-search-line cursor-pointer"></i>
-          <i className="ri-heart-3-line cursor-pointer"></i>
+        {/* DESKTOP RIGHT */}
+        <div className="hidden md:flex items-center gap-6 relative">
+          {/* 🔍 SEARCH */}
+          <div className="relative">
+            <div className="flex items-center gap-2 border rounded-md px-3 py-1 bg-white">
+              <i className="ri-search-line text-gray-500"></i>
+              <input
+                type="text"
+                placeholder="Search for products..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="outline-none text-sm w-48"
+              />
+            </div>
 
-          {/* 🛒 CART ICON */}
-          <Link to="/cart" className="relative">
-            <i className="ri-shopping-cart-2-line cursor-pointer"></i>
+            {/* 🔥 SEARCH DROPDOWN */}
+            {search && (
+              <div className="absolute top-10 left-0 w-full bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto z-50">
+                {filteredProducts.length === 0 ? (
+                  <p className="px-3 py-2 text-sm text-gray-500">
+                    No products found
+                  </p>
+                ) : (
+                  filteredProductsSafe.slice(0, 6).map((item) => (
+                    <Link
+                      key={item._id}
+                      to={`/product/${item._id}`}
+                      onClick={(e) => {
+                        if (!isAuth) {
+                          e.preventDefault();
+                          toast.info("Please login first");
+                          navigate("/login");
+                          return;
+                        }
+                        setSearch("");
+                      }}
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-10 h-10 object-cover rounded"
+                      />
 
-            {items.length > 0 && (
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{item.name}</p>
+                        <p className="text-xs text-gray-500">₹{item.price}</p>
+                      </div>
+
+                      <i className="ri-shopping-cart-2-line text-gray-500"></i>
+                    </Link>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ❤️ WISHLIST */}
+          <button
+            onClick={() => onProtectedNav("/wishlist")}
+            className="relative"
+            aria-label="Wishlist"
+          >
+            <i className="ri-heart-3-line cursor-pointer"></i>
+            {isAuth && wishlistItems.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-black text-white text-xs px-2 rounded-full">
-                {items.length}
+                {wishlistItems.length}
               </span>
             )}
-          </Link>
+          </button>
 
-          <i className="ri-user-3-line cursor-pointer"></i>
+          {/* 🛒 CART */}
+          <button
+            onClick={() => onProtectedNav("/cart")}
+            className="relative"
+            aria-label="Cart"
+          >
+            <i className="ri-shopping-cart-2-line cursor-pointer"></i>
+            {isAuth && cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs px-2 rounded-full">
+                {cartItems.length}
+              </span>
+            )}
+          </button>
+
+          {/* 👤 USER / AUTH */}
+          {!isAuth ? (
+            <div className="flex items-center gap-3">
+              <Link
+                to="/login"
+                className="px-4 py-2 border border-black rounded-lg hover:bg-black hover:text-white transition text-sm font-medium"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition text-sm font-medium"
+              >
+                Sign up
+              </Link>
+            </div>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen((s) => !s)}
+                className="flex items-center gap-2"
+                aria-label="User menu"
+              >
+                <i className="ri-user-3-line cursor-pointer"></i>
+                <span className="text-sm text-gray-700 max-w-40 truncate">
+                  {user?.name || userEmail}
+                </span>
+              </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white border rounded-lg shadow-lg overflow-hidden">
+                  <div className="px-4 py-3 border-b">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
+                      {user?.name || "User"}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+                  </div>
+                  <button
+                    onClick={onLogout}
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Mobile Toggle */}
+        {/* MOBILE TOGGLE */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden text-2xl"
@@ -56,32 +228,53 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* ✅ Mobile Menu */}
+      {/* MOBILE MENU */}
       {open && (
-        <nav className="md:hidden flex flex-col px-6 py-4 space-y-4 text-gray-700 border-t bg-[#FAF9F6]">
+        <nav className="md:hidden px-6 py-4 space-y-4 border-t bg-[#FAF9F6]">
           <Link to="/mens" onClick={closeMenu}>Men</Link>
           <Link to="/womens" onClick={closeMenu}>Women</Link>
           <Link to="/kids" onClick={closeMenu}>Kids</Link>
           <Link to="/newarrival" onClick={closeMenu}>New</Link>
           <Link to="/sale" onClick={closeMenu}>Sale</Link>
 
-          {/* Mobile Icons */}
-          <div className="flex space-x-6 text-xl pt-4 border-t items-center">
-            <i className="ri-search-line"></i>
-            <i className="ri-heart-3-line"></i>
-
-            <Link to="/cart" className="relative" onClick={closeMenu}>
-              <i className="ri-shopping-cart-2-line"></i>
-
-              {items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-black text-white text-xs px-2 rounded-full">
-                  {items.length}
+          <div className="pt-3 border-t flex items-center gap-6">
+            <button onClick={() => { closeMenu(); onProtectedNav("/wishlist"); }} className="flex items-center gap-2">
+              <i className="ri-heart-3-line"></i>
+              <span>Wishlist</span>
+              {isAuth && wishlistItems.length > 0 && (
+                <span className="ml-1 bg-black text-white text-xs px-2 rounded-full">
+                  {wishlistItems.length}
                 </span>
               )}
-            </Link>
-
-            <i className="ri-user-3-line"></i>
+            </button>
+            <button onClick={() => { closeMenu(); onProtectedNav("/cart"); }} className="flex items-center gap-2">
+              <i className="ri-shopping-cart-2-line"></i>
+              <span>Cart</span>
+              {isAuth && cartItems.length > 0 && (
+                <span className="ml-1 bg-black text-white text-xs px-2 rounded-full">
+                  {cartItems.length}
+                </span>
+              )}
+            </button>
           </div>
+
+          {!isAuth ? (
+            <div className="pt-3 border-t flex gap-3">
+              <Link to="/login" onClick={closeMenu} className="flex-1 text-center px-4 py-2 border border-black rounded-lg">
+                Login
+              </Link>
+              <Link to="/signup" onClick={closeMenu} className="flex-1 text-center px-4 py-2 bg-black text-white rounded-lg">
+                Sign up
+              </Link>
+            </div>
+          ) : (
+            <div className="pt-3 border-t">
+              <p className="text-sm text-gray-700 truncate">{user?.name || userEmail}</p>
+              <button onClick={() => { closeMenu(); onLogout(); }} className="mt-2 w-full px-4 py-2 border border-black rounded-lg">
+                Logout
+              </button>
+            </div>
+          )}
         </nav>
       )}
     </header>

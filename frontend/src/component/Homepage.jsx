@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Homepage = () => {
 
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const { products } = useSelector((state) => state.products)
+  const { isAuth } = useSelector((state) => state.user);
   console.log("Redux products:", products);
 
   useEffect(() => {
@@ -105,7 +108,16 @@ const Homepage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
             {products.length !== 0 ? (
               products.slice(0, 8).map((product) => (
-                <Link to={`/product/${product._id}`}>
+                <Link
+                  to={`/product/${product._id}`}
+                  onClick={(e) => {
+                    if (!isAuth) {
+                      e.preventDefault();
+                      toast.info("Please login first");
+                      navigate("/login");
+                    }
+                  }}
+                >
                   <div
                     key={product._id}
                     className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"

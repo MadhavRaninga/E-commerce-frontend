@@ -2,6 +2,26 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 const baseURL = "http://localhost:5000";
 
+const LS_USER_KEY = "clothify:user";
+
+function loadUserFromStorage() {
+  try {
+    const raw = localStorage.getItem(LS_USER_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveUserToStorage(user) {
+  try {
+    if (!user) localStorage.removeItem(LS_USER_KEY);
+    else localStorage.setItem(LS_USER_KEY, JSON.stringify(user));
+  } catch {
+    // ignore storage errors
+  }
+}
 
 export const registration = createAsyncThunk(
   "user/registration",
@@ -109,19 +129,22 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     loading: false,
-    isAuth: false,
-    user: null,
+    isAuth: !!loadUserFromStorage(),
+    user: loadUserFromStorage(),
     error: null,
     message: null
   },
   reducers: {
     logout(state) {
-      (state.user = null), (state.error = null);
+      state.user = null;
+      state.isAuth = false;
+      state.error = null;
+      state.message = null;
+      saveUserToStorage(null);
     },
     clearMessage(state) {
-      state.error = null,
-        state.message = null,
-        state.user = null
+      state.error = null;
+      state.message = null;
     }
   },
   extraReducers: (builder) => {
@@ -138,6 +161,7 @@ const userSlice = createSlice({
           (state.user = action.payload.user),
           (state.message = action.payload.message),
           (state.error = null)
+        saveUserToStorage(action.payload.user);
       })
       .addCase(login.rejected, (state, action) => {
         (state.loading = false),
@@ -145,6 +169,7 @@ const userSlice = createSlice({
           (state.user = null),
           (state.error = action.payload);
         state.message = null
+        saveUserToStorage(null);
       })
       .addCase(registration.pending, (state) => {
         (state.loading = true),
@@ -157,6 +182,8 @@ const userSlice = createSlice({
           (state.user = action.payload.user),
           (state.message = action.payload.message),
           (state.error = null)
+        // registration doesn't log in automatically on backend? keep local storage in sync if it does return user
+        if (action.payload?.user) saveUserToStorage(action.payload.user);
       })
       .addCase(registration.rejected, (state, action) => {
         (state.loading = false),

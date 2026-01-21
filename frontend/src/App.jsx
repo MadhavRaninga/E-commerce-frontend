@@ -15,6 +15,9 @@ import NewArrivals from "./component/NewArrival";
 import Sale from "./component/Sale";
 import ProductDetails from "./component/ProductDetail";
 import Cart from "./component/Cart";
+import ProtectedRoute from "./component/ProtectedRoute";
+import Wishlist from "./component/Wishlist";
+import Checkout from "./component/Checkout";
 
 const App = () => {
   return (
@@ -22,7 +25,6 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage/>}></Route>
-          <Route path="/navbar" element={<Navbar/>}></Route>
           <Route path="/login" element={<SignIn/>}></Route>
           <Route path="/signup" element={<Signup/>}></Route>
           <Route path="/forgotpassword" element={<ForgotPassword/>}></Route>
@@ -33,8 +35,38 @@ const App = () => {
           <Route path="/kids" element={<Kids/>}></Route>
           <Route path="/newarrival" element={<NewArrivals/>}></Route>
           <Route path="/sale" element={<Sale/>}></Route>
-          <Route path="/product/:id" element={<ProductDetails/>}></Route>
-          <Route path="/cart" element={<Cart/>}></Route>
+          <Route
+            path="/product/:id"
+            element={
+              <ProtectedRoute>
+                <ProductDetails />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          ></Route>
           <Route path="/footer" element={<Footer/>}></Route>
 
 

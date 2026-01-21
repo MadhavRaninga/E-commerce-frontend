@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
 import { sale } from "../Redux/Reducers/saleSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Sale = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { products } = useSelector((state) => state.products);
+  const { isAuth } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(sale());
@@ -67,7 +70,16 @@ const Sale = () => {
               const discountedPrice = product.price - Math.round((product.price * product.discount) / 100);
               
               return (
-                <Link to={`/product/${product._id}`}>
+                <Link
+                  to={`/product/${product._id}`}
+                  onClick={(e) => {
+                    if (!isAuth) {
+                      e.preventDefault();
+                      toast.info("Please login first");
+                      navigate("/login");
+                    }
+                  }}
+                >
                 <div
                   key={product._id}
                   className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition"
