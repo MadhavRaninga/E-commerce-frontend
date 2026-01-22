@@ -24,12 +24,12 @@ const Navbar = () => {
   const closeMenu = () => setOpen(false);
 
   const filteredProducts = search.trim() === ""
-      ? []
-      : products.filter(
-          (product) =>
-            product.name.toLowerCase().includes(search.toLowerCase()) ||
-            product.category?.toLowerCase().includes(search.toLowerCase())
-        );
+    ? []
+    : products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.category?.toLowerCase().includes(search.toLowerCase())
+    );
 
   const userEmail = user?.email || "";
 
@@ -227,54 +227,143 @@ const Navbar = () => {
       </div>
 
       {/* MOBILE MENU */}
+      {/* MOBILE MENU */}
       {open && (
-        <nav className="md:hidden px-6 py-4 space-y-4 border-t bg-[#FAF9F6]">
-          <Link to="/mens" onClick={closeMenu}>Men</Link>
-          <Link to="/womens" onClick={closeMenu}>Women</Link>
-          <Link to="/kids" onClick={closeMenu}>Kids</Link>
-          <Link to="/newarrival" onClick={closeMenu}>New</Link>
-          <Link to="/sale" onClick={closeMenu}>Sale</Link>
+        <nav className="md:hidden bg-[#FAF9F6] border-t px-6 py-5 space-y-5">
 
-          <div className="pt-3 border-t flex items-center gap-6">
-            <button onClick={() => { closeMenu(); onProtectedNav("/wishlist"); }} className="flex items-center gap-2">
+          {/* 🔍 MOBILE SEARCH */}
+          <div className="relative">
+            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white">
+              <i className="ri-search-line text-gray-500"></i>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full outline-none text-sm"
+              />
+            </div>
+
+            {search && (
+              <div className="absolute top-12 left-0 w-full bg-white border rounded-lg shadow max-h-60 overflow-y-auto z-50">
+                {filteredProducts.length === 0 ? (
+                  <p className="px-4 py-3 text-sm text-gray-500">
+                    No products found
+                  </p>
+                ) : (
+                  filteredProductsSafe.slice(0, 6).map((item) => (
+                    <Link
+                      key={item._id}
+                      to={`/product/${item._id}`}
+                      onClick={() => {
+                        setSearch("");
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-10 h-10 rounded object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium">{item.name}</p>
+                        <p className="text-xs text-gray-500">₹{item.price}</p>
+                      </div>
+                    </Link>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 📂 NAV LINKS (PLAIN LINKS) */}
+          <div className="flex flex-col gap-2 text-gray-800 font-medium">
+            {["mens", "womens", "kids", "newarrival", "sale"].map((route) => (
+              <Link
+                key={route}
+                to={`/${route}`}
+                onClick={closeMenu}
+                className="py-2 text-lg border-b border-gray-200 hover:text-black hover:underline"
+              >
+                {route.charAt(0).toUpperCase() + route.slice(1)}
+              </Link>
+            ))}
+          </div>
+
+
+          {/* ❤️ CART & WISHLIST */}
+          <div className="flex gap-4 pt-3 border-t">
+            <button
+              onClick={() => {
+                closeMenu();
+                onProtectedNav("/wishlist");
+              }}
+              className="flex-1 flex justify-center items-center gap-2 py-3 border rounded-lg bg-white"
+            >
               <i className="ri-heart-3-line"></i>
-              <span>Wishlist</span>
+              Wishlist
               {isAuth && wishlistItems.length > 0 && (
-                <span className="ml-1 bg-black text-white text-xs px-2 rounded-full">
+                <span className="bg-black text-white text-xs px-2 rounded-full">
                   {wishlistItems.length}
                 </span>
               )}
             </button>
-            <button onClick={() => { closeMenu(); onProtectedNav("/cart"); }} className="flex items-center gap-2">
+
+            <button
+              onClick={() => {
+                closeMenu();
+                onProtectedNav("/cart");
+              }}
+              className="flex-1 flex justify-center items-center gap-2 py-3 border rounded-lg bg-white"
+            >
               <i className="ri-shopping-cart-2-line"></i>
-              <span>Cart</span>
+              Cart
               {isAuth && cartItems.length > 0 && (
-                <span className="ml-1 bg-black text-white text-xs px-2 rounded-full">
+                <span className="bg-black text-white text-xs px-2 rounded-full">
                   {cartItems.length}
                 </span>
               )}
             </button>
           </div>
 
+          {/* 👤 AUTH / USER */}
           {!isAuth ? (
-            <div className="pt-3 border-t flex gap-3">
-              <Link to="/login" onClick={closeMenu} className="flex-1 text-center px-4 py-2 border border-black rounded-lg">
+            <div className="flex gap-3 pt-3 border-t">
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="flex-1 py-3 text-center border rounded-lg"
+              >
                 Login
               </Link>
-              <Link to="/signup" onClick={closeMenu} className="flex-1 text-center px-4 py-2 bg-black text-white rounded-lg">
-                Sign up
+              <Link
+                to="/signup"
+                onClick={closeMenu}
+                className="flex-1 py-3 text-center bg-black text-white rounded-lg"
+              >
+                Sign Up
               </Link>
             </div>
           ) : (
-            <div className="pt-3 border-t">
-              <p className="text-sm text-gray-700 truncate">{user?.name || userEmail}</p>
-              <button onClick={() => { closeMenu(); onLogout(); }} className="mt-2 w-full px-4 py-2 border border-black rounded-lg">
+            <div className="pt-3 border-t space-y-2">
+              <p className="text-sm text-gray-700 truncate">
+                {user?.name || userEmail}
+              </p>
+              <button
+                onClick={() => {
+                  closeMenu();
+                  onLogout();
+                }}
+                className="w-full py-3 border border-black rounded-lg"
+              >
                 Logout
               </button>
             </div>
           )}
         </nav>
       )}
+
     </header>
   );
 };

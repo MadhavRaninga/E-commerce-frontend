@@ -12,7 +12,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   const { items } = useSelector((state) => state.cart);
-  const { loading, error, message } = useSelector((state) => state.order);
+  const { loading, error, order } = useSelector((state) => state.order);
 
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -23,25 +23,34 @@ const Checkout = () => {
       sum +
       ((i.product?.price || 0) -
         ((i.product?.price || 0) * (i.product?.discount || 0)) / 100) *
-        i.quantity,
+      i.quantity,
     0
   );
 
   useEffect(() => {
     dispatch(getCart());
   }, [dispatch]);
-
   useEffect(() => {
-    if (message) {
-      toast.success(message);
-      dispatch(clearOrderState());
-      navigate("/");
+    if (order && order._id) {
+      toast.success("Order placed successfully");
+
+      // ✅ ABSOLUTE PATH
+      navigate(`/order-success/${order._id}`);
+
+      // ✅ Clear AFTER redirect
+      setTimeout(() => {
+        dispatch(clearOrderState());
+      }, 0);
     }
+
     if (error) {
       toast.error(error);
       dispatch(clearOrderState());
     }
-  }, [message, error, dispatch, navigate]);
+  }, [order, error, dispatch, navigate]);
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -153,7 +162,7 @@ const Checkout = () => {
                         ((item.product?.price || 0) -
                           ((item.product?.price || 0) *
                             (item.product?.discount || 0)) /
-                            100) * item.quantity
+                          100) * item.quantity
                       )}
                     </p>
                   </div>

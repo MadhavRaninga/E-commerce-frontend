@@ -98,7 +98,7 @@ const Products = () => {
                   <td>
                     <div className="row" style={{ justifyContent: "flex-start" }}>
                       <Link className="btn secondary" to={`/products/${p._id}/edit`}>
-                        Edit
+                      <button>Edit</button>
                       </Link>
                       <button className="btn danger" onClick={() => remove(p._id)}>
                         Delete
