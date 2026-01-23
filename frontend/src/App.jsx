@@ -21,6 +21,7 @@ import Wishlist from "./component/Wishlist";
 import Checkout from "./component/Checkout";
 import OrderSuccess from "./component/OrderSuccess";
 import OrderStatus from "./component/OrderStatus";
+import MyOrders from "./component/MyOrder";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/wishlist" element={<ProtectedRoute> <Wishlist /> </ProtectedRoute>}></Route>
           <Route path="/order-success/:id" element={<OrderSuccess/>}></Route>
           <Route path="/orders/:id" element={<OrderStatus/>}></Route>
+          <Route path="/orders" element={<ProtectedRoute><MyOrders/></ProtectedRoute>}></Route>
 
           <Route path="/footer" element={<Footer />}></Route>
 

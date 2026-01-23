@@ -46,7 +46,7 @@ const Navbar = () => {
       dispatch(clearWishlist());
       dispatch(clearCart());
     }
-  }, [dispatch, isAuth, userEmail, products?.length]);
+  }, [dispatch, isAuth, userEmail, products?.length, products]);
 
   const onProtectedNav = (path) => {
     if (!isAuth) {
@@ -168,6 +168,14 @@ const Navbar = () => {
               </span>
             )}
           </button>
+          {/* 📦 MY ORDERS */}
+          <button
+            onClick={() => onProtectedNav("/orders")}
+            className="relative"
+            aria-label="My Orders"
+          >
+            <i className="ri-file-list-3-line cursor-pointer"></i>
+          </button>
 
           {/* 👤 USER / AUTH */}
           {!isAuth ? (
@@ -205,6 +213,16 @@ const Navbar = () => {
                     </p>
                     <p className="text-xs text-gray-500 truncate">{userEmail}</p>
                   </div>
+                  <button
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      navigate("/orders");
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-gray-100"
+                  >
+                    My Orders
+                  </button>
+
                   <button
                     onClick={onLogout}
                     className="w-full text-left px-4 py-3 text-sm hover:bg-gray-100"
@@ -326,6 +344,18 @@ const Navbar = () => {
               )}
             </button>
           </div>
+          {/* 📦 MY ORDERS */}
+          <button
+            onClick={() => {
+              closeMenu();
+              onProtectedNav("/orders");
+            }}
+            className="flex justify-center items-center gap-2 py-3 border rounded-lg bg-white mt-3"
+          >
+            <i className="ri-file-list-3-line"></i>
+            My Orders
+          </button>
+
 
           {/* 👤 AUTH / USER */}
           {!isAuth ? (

@@ -20,6 +20,23 @@ export const placeOrder = createAsyncThunk(
     }
   }
 );
+export const getMyOrders = createAsyncThunk(
+  "order/getMyOrders",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axios.get(
+        `${baseURL}/api/orders/getAllOrders`,
+        { withCredentials: true }
+      );
+      return data.orders;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message || "Failed to fetch orders"
+      );
+    }
+  }
+);
+
 
 const orderSlice = createSlice({
   name: "order",
@@ -28,6 +45,7 @@ const orderSlice = createSlice({
     error: null,
     message: null,
     lastOrder: null,
+    orders: [], // ✅ IMPORTANT
   },
   reducers: {
     clearOrderState(state) {
@@ -39,6 +57,7 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      /* PLACE ORDER */
       .addCase(placeOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -52,11 +71,22 @@ const orderSlice = createSlice({
       .addCase(placeOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.message = null;
+      })
+
+      /* GET MY ORDERS */
+      .addCase(getMyOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getMyOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(getMyOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
 export const { clearOrderState } = orderSlice.actions;
 export default orderSlice.reducer;
-
