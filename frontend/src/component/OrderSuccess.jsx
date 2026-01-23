@@ -10,7 +10,7 @@ const OrderSuccess = () => {
 
       <div className="flex flex-col items-center justify-center py-32">
         <h1 className="text-4xl font-bold text-green-600 mb-4">
-          Order Placed Successfully 🎉
+          Order Placed Successfully <object data="" type=""></object>
         </h1>
 
         <p className="text-gray-600 mb-6">

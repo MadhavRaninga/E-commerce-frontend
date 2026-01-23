@@ -44,6 +44,11 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default: "Processing"
     },
+    orderStatus: {
+        type: String,
+        enum: ["Order Placed", "Processing", "Out for Delivery", "Delivered"],
+        default: "Order Placed",
+    },
 }, { timestamps: true })
 
 module.exports = mongoose.model("Order", orderSchema)

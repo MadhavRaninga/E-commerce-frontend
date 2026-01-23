@@ -14,7 +14,6 @@ export function saveAdmin(admin) {
     if (!admin) localStorage.removeItem(LS_ADMIN_KEY);
     else localStorage.setItem(LS_ADMIN_KEY, JSON.stringify(admin));
   } catch {
-    // ignore
   }
 }
 

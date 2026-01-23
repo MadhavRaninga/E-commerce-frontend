@@ -44,55 +44,63 @@ const NewArrivals = () => {
       <Navbar />
 
       {/* ================= HERO ================= */}
-      <section className="relative w-full h-[75vh] flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 bg-[#F0EFE9] flex flex-col justify-center px-10 md:px-20 py-12">
-          <span className="text-sm tracking-widest uppercase text-gray-500 mb-4 font-semibold">
-            Season — 2024
-          </span>
-          <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6">
-            New <br /> Arrivals
-          </h1>
-          <p className="text-gray-600 text-lg max-w-md mb-8">
-            Discover the latest trends. Fresh styles curated just for you.
-          </p>
-          <button className="w-max px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition">
-            Shop The Drop
-          </button>
-        </div>
+      <section className="relative w-full">
+        <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-        <div className="w-full md:w-1/2">
-          <img
-            src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
-            alt="New Arrivals"
-            className="w-full h-full object-cover"
-          />
+          {/* LEFT */}
+          <div className="flex flex-col">
+            <span className="text-sm tracking-widest uppercase text-gray-500 mb-4 font-semibold">
+              Season — 2024
+            </span>
+
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
+              New <br className="hidden sm:block" /> Arrivals
+            </h1>
+
+            <p className="text-gray-600 text-base sm:text-lg max-w-md mb-8">
+              Discover the latest trends. Fresh styles curated just for you.
+            </p>
+
+            <button className="w-max px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition">
+              Shop The Drop
+            </button>
+          </div>
+
+          {/* RIGHT */}
+          <div className="w-full h-[300px] sm:h-[400px] md:h-[520px] rounded-2xl overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
+              alt="New Arrivals"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
         </div>
       </section>
 
-      {/* ================= FILTERS ================= */}
-      <section className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur border-b border-gray-200 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex gap-4 overflow-x-auto">
-          {["All", "Jacket", "T-shirt", "Blazer", "Hoodie"].map((item) => (
+
+      <section className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex gap-3 overflow-x-auto scrollbar-hide">
+          {["all", "jacket", "t-shirt", "shirt", "blazer", "hoodie"].map((item) => (
             <button
               key={item}
               onClick={() => {
-                setFilter();
-                setVisibleCount(9); // ✅ reset here (NO useEffect)
+                setFilter("all");      // 👈 always stay on all
+                setVisibleCount(9);
               }}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition ${
-                filter === item.toLowerCase()
-                  ? "bg-black text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:border-black"
-              }`}
+              className="px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition
+                   bg-white border border-gray-300 text-gray-700 hover:bg-black hover:text-white"
             >
-              {item}
+              {item.charAt(0).toUpperCase() + item.slice(1)}
             </button>
           ))}
         </div>
       </section>
 
+
+
       {/* ================= PRODUCTS GRID ================= */}
-      <section className="max-w-7xl mx-auto px-6 py-16 md:mt-0 mt-[150px]">
+      <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[400px]">
           {visibleItems.map((item) => (
             <div
@@ -113,27 +121,27 @@ const NewArrivals = () => {
                   }
                 }}
               >
-              <img
-                src={item.image?.url || item.image}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-              />
+                <img
+                  src={item.image?.url || item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                />
 
-              {/* Hover */}
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                <span className="bg-white px-6 py-2 rounded-full font-medium">
-                  Quick View
-                </span>
-              </div>
+                {/* Hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                  <span className="bg-white px-6 py-2 rounded-full font-medium">
+                    Quick View
+                  </span>
+                </div>
 
-              {/* Info */}
-              <div className="absolute bottom-6 left-6 text-white">
-                <p className="text-xs uppercase tracking-wider mb-1">
-                  {item.category}
-                </p>
-                <h3 className="font-serif text-2xl">{item.title}</h3>
-                <p className="font-medium mt-1">₹{item.price}</p>
-              </div>
+                {/* Info */}
+                <div className="absolute bottom-6 left-6 text-white">
+                  <p className="text-xs uppercase tracking-wider mb-1">
+                    {item.category}
+                  </p>
+                  <h3 className="font-serif text-2xl">{item.title}</h3>
+                  <p className="font-medium mt-1">₹{item.price}</p>
+                </div>
               </Link>
             </div>
           ))}

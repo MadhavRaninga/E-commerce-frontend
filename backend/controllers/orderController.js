@@ -10,7 +10,7 @@ exports.order = async (req, res) => {
             return res.status(401).json({ message: "Address Detail Required" })
         }
         const cart = await Cart.findOne({ user: userId })
-        .populate("items.product");
+            .populate("items.product");
         if (!cart) {
             return res.status(401).json({ message: "Cart not Found" })
         }
@@ -18,7 +18,7 @@ exports.order = async (req, res) => {
 
         // const product = await Product.findById(productId)
         // console.log(product);
-        
+
         // if (!product) {
         //     return res.status(404).json({ message: "Product not Found" })
         // }
@@ -27,7 +27,7 @@ exports.order = async (req, res) => {
         const orderItem = [];
 
         cart.items.forEach((item) => {
-            
+
             orderItem.push({
                 product: item.product._id,
                 quantity: item.quantity,
@@ -42,7 +42,8 @@ exports.order = async (req, res) => {
             address,
             city,
             pincode,
-            total
+            total,
+            orderStatus: "Order Placed" 
         })
 
         cart.items = []
@@ -65,6 +66,25 @@ exports.getMyorders = async (req, res) => {
         res.status(500).json({ message: "error while get All orders", error: error.message })
     }
 }
+
+exports.getOrderById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate("orderItem.product")
+            .populate("user", "name email");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json({ success: true, order });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while fetching order",
+            error: error.message,
+        });
+    }
+};
 
 exports.updateOrderStatus = async (req, res) => {
     try {

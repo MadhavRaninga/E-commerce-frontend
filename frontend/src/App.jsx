@@ -2,6 +2,7 @@ import SignIn from "./component/SignIn";
 import Signup from "./component/Signup";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import ForgotPassword from "./component/ForgotPassword";
 import VerifyOtp from "./component/VerifyOtp";
 import ResetPass from "./component/ResetPass";
