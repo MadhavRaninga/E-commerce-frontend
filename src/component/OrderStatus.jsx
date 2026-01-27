@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
-import { api } from "../../../admin/src/lib/api.js"
+import api from "../lib/api"; 
 import { toast } from "react-toastify";
 
 const OrderStatus = () => {
