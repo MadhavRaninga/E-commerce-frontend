@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
-import api from "../lib/api"; 
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const OrderStatus = () => {
   const { id } = useParams(); // orderId from URL
   const [order, setOrder] = useState(null);
-
+  const baseURL = "https://e-commerce-backend-ibt8.onrender.com"
   const steps = [
     "Order Placed",
     "Processing",
@@ -27,7 +27,7 @@ const OrderStatus = () => {
 
     const loadOrder = async () => {
       try {
-        const { data } = await api.get(`/api/orders/getbyId/${id}`);
+        const { data } = await axios.get(`${baseURL}/api/orders/getbyId/${id}`);
         setOrder(data.order);
       } catch (err) {
         console.error("ORDER LOAD ERROR:", err.response || err);

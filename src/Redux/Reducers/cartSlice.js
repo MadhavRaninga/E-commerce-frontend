@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-const baseURL = "http://localhost:5000";
+const baseURL = "https://e-commerce-backend-ibt8.onrender.com";
 
 
 export const addToCart = createAsyncThunk(
