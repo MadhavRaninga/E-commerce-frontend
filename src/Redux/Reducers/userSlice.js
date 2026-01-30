@@ -3,6 +3,7 @@ import axios from "axios";
 const baseURL = "https://e-commerce-backend-ibt8.onrender.com";
 
 const LS_USER_KEY = "clothify:user";
+const LS_TOKEN_KEY = "clothify:token";
 
 function loadUserFromStorage() {
   try {
@@ -18,6 +19,15 @@ function saveUserToStorage(user) {
   try {
     if (!user) localStorage.removeItem(LS_USER_KEY);
     else localStorage.setItem(LS_USER_KEY, JSON.stringify(user));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function saveTokenToStorage(token) {
+  try {
+    if (!token) localStorage.removeItem(LS_TOKEN_KEY);
+    else localStorage.setItem(LS_TOKEN_KEY, token);
   } catch {
     // ignore storage errors
   }
@@ -141,6 +151,7 @@ const userSlice = createSlice({
       state.error = null;
       state.message = null;
       saveUserToStorage(null);
+      saveTokenToStorage(null);
     },
     clearMessage(state) {
       state.error = null;
@@ -162,6 +173,8 @@ const userSlice = createSlice({
           (state.message = action.payload.message),
           (state.error = null)
         saveUserToStorage(action.payload.user);
+        // store jwt for Authorization header fallback (helps when cookies are blocked on deploy)
+        if (action.payload?.token) saveTokenToStorage(action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
         (state.loading = false),
@@ -170,6 +183,7 @@ const userSlice = createSlice({
           (state.error = action.payload);
         state.message = null
         saveUserToStorage(null);
+        saveTokenToStorage(null);
       })
       .addCase(registration.pending, (state) => {
         (state.loading = true),

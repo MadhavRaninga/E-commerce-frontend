@@ -3,6 +3,17 @@ import axios from "axios";
 
 const baseURL = "https://e-commerce-backend-ibt8.onrender.com";
 
+const LS_TOKEN_KEY = "clothify:token";
+
+function authHeader() {
+  try {
+    const token = localStorage.getItem(LS_TOKEN_KEY);
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 export const placeOrder = createAsyncThunk(
   "order/place",
   async ({ address, city, pincode }, thunkAPI) => {
@@ -10,7 +21,7 @@ export const placeOrder = createAsyncThunk(
       const { data } = await axios.post(
         `${baseURL}/api/orders/orderPlace`,
         { address, city, pincode },
-        { withCredentials: true }
+        { withCredentials: true, headers: { ...authHeader() } }
       );
       return data;
     } catch (error) {
@@ -26,7 +37,7 @@ export const getMyOrders = createAsyncThunk(
     try {
       const { data } = await axios.get(
         `${baseURL}/api/orders/getAllOrders`,
-        { withCredentials: true }
+        { withCredentials: true, headers: { ...authHeader() } }
       );
       return data.orders;
     } catch (error) {
