@@ -3,9 +3,6 @@ import axios from "axios";
 
 const BASE_URL = "https://e-commerce-backend-ibt8.onrender.com/api";
 
-/* ============================
-   ADD TO CART
-============================ */
 export const addToCart = createAsyncThunk(
   "cart/add",
   async ({ productId, quantity }, thunkAPI) => {
@@ -24,9 +21,6 @@ export const addToCart = createAsyncThunk(
   }
 );
 
-/* ============================
-   GET CART
-============================ */
 export const getCart = createAsyncThunk(
   "cart/getCart",
   async (_, thunkAPI) => {
@@ -44,9 +38,7 @@ export const getCart = createAsyncThunk(
   }
 );
 
-/* ============================
-   UPDATE QUANTITY
-============================ */
+
 export const updateCartQuantity = createAsyncThunk(
   "cart/updateQuantity",
   async ({ itemId, quantity }, thunkAPI) => {
@@ -65,9 +57,7 @@ export const updateCartQuantity = createAsyncThunk(
   }
 );
 
-/* ============================
-   REMOVE ITEM
-============================ */
+
 export const removeCartItem = createAsyncThunk(
   "cart/removeItem",
   async (itemId, thunkAPI) => {
