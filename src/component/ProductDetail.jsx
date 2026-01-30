@@ -21,9 +21,9 @@ const ProductDetails = () => {
     const { items: wishlistItems = [] } = useSelector((state) => state.wishlist);
 
     const isWishlisted = useMemo(() => {
-        if (!product?._id) return false;
-        return wishlistItems.some((p) => p._id === product._id);
-    }, [wishlistItems, product?._id]);
+        if (!product?._id ) return false;
+        return wishlistItems.some((p) => p?._id === product._id);            
+    }, [wishlistItems, product])
 
     useEffect(() => {
         dispatch(getProductById(id));
@@ -31,7 +31,7 @@ const ProductDetails = () => {
 
     // Handle Quantity Increase
     const increaseQuantity = () => {
-        if (product && quantity < product.stock) {
+        if (product && quantity < product.stock || 0) {
             setQuantity((prev) => prev + 1);
         }
     };
@@ -44,6 +44,7 @@ const ProductDetails = () => {
     };
 
     const handleAddToCart = () => {
+        if (!product?._id) return;
         dispatch(addToCart({ productId: product._id, quantity }))
     }
 
@@ -62,7 +63,7 @@ const ProductDetails = () => {
 
     const discountedPrice =
         product.price -
-        Math.round((product.price * product.discount) / 100);
+        Math.round((product.price * product.discount || 0) / 100);
 
     return (
         <div className="bg-[#FAF9F6] min-h-screen">
