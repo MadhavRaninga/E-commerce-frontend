@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
-import { api } from "../../../admin/src/lib/api.js"
+import axios from "axios";
 import { toast } from "react-toastify";
 
 const OrderStatus = () => {
-  const { id } = useParams(); // orderId from URL
+  const { id } = useParams();
   const [order, setOrder] = useState(null);
 
   const steps = [
@@ -27,10 +27,12 @@ const OrderStatus = () => {
 
     const loadOrder = async () => {
       try {
-        const { data } = await api.get(`/api/orders/getbyId/${id}`);
+        const { data } = await axios.get(
+          `http://localhost:5000/api/orders/getbyId/${id}`,
+          { withCredentials: true }
+        );
         setOrder(data.order);
       } catch (err) {
-        console.error("ORDER LOAD ERROR:", err.response || err);
         toast.error(
           err?.response?.data?.message || "Failed to load order status"
         );
@@ -39,7 +41,6 @@ const OrderStatus = () => {
 
     loadOrder();
   }, [id]);
-
 
   const currentStep = statusToStep[order?.orderStatus] ?? 0;
 
@@ -57,16 +58,18 @@ const OrderStatus = () => {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={`p-4 rounded-lg border flex items-center gap-4 ${index <= currentStep
-                  ? "bg-green-50 border-green-500"
-                  : "bg-white"
-                  }`}
+                className={`p-4 rounded-lg border flex items-center gap-4 ${
+                  index <= currentStep
+                    ? "bg-green-50 border-green-500"
+                    : "bg-white"
+                }`}
               >
                 <span
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${index <= currentStep
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-300"
-                    }`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                    index <= currentStep
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-300"
+                  }`}
                 >
                   {index + 1}
                 </span>
