@@ -20,10 +20,13 @@ const ProductDetails = () => {
     );
     const { items: wishlistItems = [] } = useSelector((state) => state.wishlist);
 
+    const productId = product?._id;
+
     const isWishlisted = useMemo(() => {
-        if (!product?._id) return false;
-        return wishlistItems.some((p) => p._id === product._id);
-    }, [wishlistItems, product?._id]);
+        if (!productId) return false;
+        return wishlistItems.some((p) => p._id === productId);
+    }, [wishlistItems, productId]);
+
 
     useEffect(() => {
         dispatch(getProductById(id));
@@ -122,8 +125,8 @@ const ProductDetails = () => {
                                     key={size}
                                     onClick={() => setSelectedSize(size)}
                                     className={`w-12 h-12 flex items-center justify-center border rounded-lg transition duration-200 font-medium ${selectedSize === size
-                                            ? 'border-black bg-black text-white'
-                                            : 'border-gray-300 bg-white text-gray-700 hover:border-black'
+                                        ? 'border-black bg-black text-white'
+                                        : 'border-gray-300 bg-white text-gray-700 hover:border-black'
                                         }`}
                                 >
                                     {size}
@@ -176,8 +179,8 @@ const ProductDetails = () => {
                         <button
                             onClick={handleWishlistToggle}
                             className={`p-3 rounded-lg border transition duration-200 ${isWishlisted
-                                    ? 'border-red-500 text-red-500 bg-red-50'
-                                    : 'border-gray-300 text-gray-400 hover:border-red-500 hover:text-red-500 bg-white'
+                                ? 'border-red-500 text-red-500 bg-red-50'
+                                : 'border-gray-300 text-gray-400 hover:border-red-500 hover:text-red-500 bg-white'
                                 }`}
                             title="Add to Wishlist"
                         >
