@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { logout as logoutAction } from "../Redux/Reducers/userSlice";
+import { logoutUser } from "../Redux/Reducers/userSlice";
 import { clearCart, getCart } from "../Redux/Reducers/cartSlice";
 import { clearWishlist, hydrateWishlist } from "../Redux/Reducers/wishlistSlice";
 import { getProducts } from "../Redux/Reducers/productSlice";
@@ -58,7 +58,7 @@ const Navbar = () => {
   };
 
   const onLogout = () => {
-    dispatch(logoutAction());
+    dispatch(logoutUser());
     dispatch(clearWishlist());
     dispatch(clearCart());
     setUserMenuOpen(false);
