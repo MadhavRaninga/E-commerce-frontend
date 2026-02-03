@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseURL = "https://e-commerce-backend-ibt8.onrender.com";
+const baseURL = "https://e-commerce-backend-vslq.onrender.com";
 
 /* =========================
    AXIOS INSTANCE

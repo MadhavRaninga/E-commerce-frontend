@@ -7,7 +7,7 @@ import axios from "axios";
 const OrderStatus = () => {
   const { id } = useParams(); // orderId from URL
   const [order, setOrder] = useState(null);
-  const baseURL = "https://e-commerce-backend-ibt8.onrender.com"
+  const baseURL = "https://e-commerce-backend-vslq.onrender.com";
   const steps = [
     "Order Placed",
     "Processing",
