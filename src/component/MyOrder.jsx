@@ -14,6 +14,11 @@ const MyOrders = () => {
     dispatch(getMyOrders());
   }, [dispatch]);
 
+  // Filter out "Delivered" orders - only show active orders
+  const activeOrders = orders.filter(
+    (order) => order.orderStatus !== "Delivered"
+  );
+
   return (
     <>
       <Navbar />
@@ -21,11 +26,11 @@ const MyOrders = () => {
       <div className="max-w-4xl mx-auto px-6 py-10">
         <h2 className="text-2xl font-bold mb-6">My Orders</h2>
 
-        {orders.length === 0 ? (
-          <p className="text-gray-500">No orders found.</p>
+        {activeOrders.length === 0 ? (
+          <p className="text-gray-500">No active orders found.</p>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => (
+            {activeOrders.map((order) => (
               <div
                 key={order._id}
                 className="border rounded-lg p-4 flex justify-between items-center"
