@@ -1,7 +1,10 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import SignIn from "./component/SignIn";
 import Signup from "./component/Signup";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { checkAuth } from "./Redux/Reducers/userSlice";
 
 import ForgotPassword from "./component/ForgotPassword";
 import VerifyOtp from "./component/VerifyOtp";
@@ -24,6 +27,16 @@ import OrderStatus from "./component/OrderStatus";
 import MyOrders from "./component/MyOrder";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  // Check authentication on app load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(checkAuth());
+    }
+  }, [dispatch]);
+
   return (
     <>
       <BrowserRouter>

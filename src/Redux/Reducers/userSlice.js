@@ -59,7 +59,7 @@ export const logoutUser = createAsyncThunk(
     try {
       const { data } = await api.get("/api/user/logout");
       return data;
-    } catch (error) {
+    } catch {
       return thunkAPI.rejectWithValue("Logout failed");
     }
   }
@@ -111,6 +111,63 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+// Check authentication status on app load
+export const checkAuth = createAsyncThunk(
+  "user/checkAuth",
+  async (_, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        return thunkAPI.rejectWithValue("No token found");
+      }
+
+      const { data } = await api.get("/api/user/profile", {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      return data;
+    } catch (error) {
+      // If auth fails, clear localStorage
+      localStorage.removeItem("token");
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message || "Not authenticated"
+      );
+    }
+  }
+);
+
+/* =========================
+   HELPER FUNCTIONS
+========================= */
+
+// Load user from localStorage
+const loadUserFromStorage = () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    if (userStr && token) {
+      return JSON.parse(userStr);
+    }
+  } catch (error) {
+    console.error("Error loading user from storage:", error);
+  }
+  return null;
+};
+
+// Save user to localStorage
+const saveUserToStorage = (user) => {
+  try {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  } catch (error) {
+    console.error("Error saving user to storage:", error);
+  }
+};
+
 /* =========================
    SLICE
 ========================= */
@@ -119,8 +176,8 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     loading: false,
-    isAuth: false,   // 🔥 starts false (cookie checked by backend)
-    user: null,
+    isAuth: !!localStorage.getItem("token"), // Check if token exists
+    user: loadUserFromStorage(), // Load user from localStorage
     error: null,
     message: null,
     resetEmail: null,
@@ -143,6 +200,13 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.message = action.payload.message;
         state.error = null;
+        // Save user and token to localStorage
+        if (action.payload.user) {
+          saveUserToStorage(action.payload.user);
+        }
+        if (action.payload.token) {
+          localStorage.setItem("token", action.payload.token);
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -156,6 +220,39 @@ const userSlice = createSlice({
         state.isAuth = false;
         state.user = null;
         state.message = "Logged out";
+        // Clear localStorage on logout
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        // Even if logout API fails, clear local state
+        state.isAuth = false;
+        state.user = null;
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      })
+
+      // CHECK AUTH
+      .addCase(checkAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuth = true;
+        state.user = action.payload.user;
+        state.error = null;
+        // Update localStorage
+        if (action.payload.user) {
+          saveUserToStorage(action.payload.user);
+        }
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.loading = false;
+        state.isAuth = false;
+        state.user = null;
+        // Clear localStorage if auth check fails
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       })
 
       // REGISTRATION
