@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const OrderStatus = () => {
-  const { id } = useParams(); // orderId from URL
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [order, setOrder] = useState(null);
@@ -28,15 +28,6 @@ const OrderStatus = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    // 🔐 If not logged in → redirect
-    if (!token) {
-      toast.error("Please login to view order status");
-      navigate("/login");
-      return;
-    }
-
     if (!id) {
       toast.error("Invalid order ID");
       navigate("/");
@@ -45,11 +36,13 @@ const OrderStatus = () => {
 
     const loadOrder = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const { data } = await axios.get(
           `${baseURL}/api/orders/getbyId/${id}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: token ? `Bearer ${token}` : "",
             },
           }
         );
@@ -58,13 +51,15 @@ const OrderStatus = () => {
       } catch (err) {
         console.error("ORDER LOAD ERROR:", err.response || err);
 
-        toast.error(
-          err?.response?.data?.message || "Failed to load order status"
-        );
-
+        
         if (err?.response?.status === 401) {
+          toast.error("Session expired. Please login again.");
           localStorage.removeItem("token");
           navigate("/login");
+        } else {
+          toast.error(
+            err?.response?.data?.message || "Failed to load order"
+          );
         }
       } finally {
         setLoading(false);
