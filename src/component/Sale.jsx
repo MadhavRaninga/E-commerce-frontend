@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
-import { sale } from "../Redux/Reducers/saleSlice";
+import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -13,7 +13,7 @@ const Sale = () => {
   const { isAuth } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(sale());
+    dispatch(getProducts());
   }, [dispatch]);
 
   const saleProducts = products.filter(

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "./Footer";
-import { newArrival } from "../Redux/Reducers/newSlice";
+import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -17,7 +17,7 @@ const NewArrivals = () => {
 
   // Fetch products
   useEffect(() => {
-    dispatch(newArrival());
+    dispatch(getProducts());
   }, [dispatch]);
 
   // Filter products

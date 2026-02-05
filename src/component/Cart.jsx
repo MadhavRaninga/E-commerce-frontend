@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     getCart,
     removeCartItem,
-    updateCartQuantity
+    updateCartQuantity,
+    updateQuantityOptimistic
 } from "../Redux/Reducers/cartSlice";
 import Navbar from "../component/Navbar";
 import { useEffect } from "react";
@@ -25,10 +26,31 @@ const Cart = () => {
     }, [dispatch])
 
     const handleDec = (id, quantity) => {
-        dispatch(updateCartQuantity({ itemId: id, quantity: quantity - 1 }))
+        const newQuantity = quantity - 1;
+        if (newQuantity > 0) {
+            // Optimistic update - update UI immediately (no await, instant!)
+            dispatch(updateQuantityOptimistic({ itemId: id, quantity: newQuantity }));
+            
+            // Update on server in background (non-blocking)
+            dispatch(updateCartQuantity({ itemId: id, quantity: newQuantity }))
+                .catch(() => {
+                    // If update fails, silently refetch cart to restore correct state
+                    dispatch(getCart());
+                });
+        }
     }
+    
     const handleInc = (id, quantity) => {
-        dispatch(updateCartQuantity({ itemId: id, quantity: quantity + 1 }))
+        const newQuantity = quantity + 1;
+        // Optimistic update - update UI immediately (no await, instant!)
+        dispatch(updateQuantityOptimistic({ itemId: id, quantity: newQuantity }));
+        
+        // Update on server in background (non-blocking)
+        dispatch(updateCartQuantity({ itemId: id, quantity: newQuantity }))
+            .catch(() => {
+                // If update fails, silently refetch cart to restore correct state
+                dispatch(getCart());
+            });
     }
 
     return (
@@ -64,16 +86,18 @@ const Cart = () => {
                                         <button
                                             disabled={item.quantity === 1}
                                             onClick={() => handleDec(item._id, item.quantity)}
-                                            className="px-3 py-1 cursor-pointer border disabled:opacity-50"
+                                            className="px-3 py-1 cursor-pointer border disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:bg-gray-50 active:bg-gray-100"
                                         >
                                             −
                                         </button>
 
-                                        <span>{item.quantity}</span>
+                                        <span className="min-w-[2rem] text-center font-medium">
+                                            {item.quantity}
+                                        </span>
 
                                         <button
                                             onClick={() => handleInc(item._id, item.quantity)}
-                                            className="px-3 cursor-pointer py-1 border"
+                                            className="px-3 cursor-pointer py-1 border hover:bg-gray-50 active:bg-gray-100 transition-opacity"
                                         >
                                             +
                                         </button>

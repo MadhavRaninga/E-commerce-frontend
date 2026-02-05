@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
-import { womensProduct } from "../Redux/Reducers/womenSlice"; // Assuming you create this slice
+import { getProducts } from "../Redux/Reducers/productSlice";
 import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ const Womens = () => {
   const [sort, setSort] = useState("");
 
   useEffect(() => {
-    dispatch(womensProduct());
+    dispatch(getProducts());
   }, [dispatch]);
 
   // 🔹 Filter only Women's products

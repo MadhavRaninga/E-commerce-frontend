@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
-import { kidsProduct } from "../Redux/Reducers/kidsSlice"; // Assuming you create this slice
+import { getProducts } from "../Redux/Reducers/productSlice";
 import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ const Kids = () => {
   const [sort, setSort] = useState("");
 
   useEffect(() => {
-    dispatch(kidsProduct());
+    dispatch(getProducts());
   }, [dispatch]);
 
   // 🔹 Filter only Kids' products

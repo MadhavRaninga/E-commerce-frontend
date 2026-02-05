@@ -48,7 +48,8 @@ export const updateCartQuantity = createAsyncThunk(
         { itemId, quantity },
         { withCredentials: true }
       );
-      return data.cart;
+      // Backend returns updatedCart, not cart
+      return data.updatedCart || data.cart;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error?.response?.data?.message || "Update failed"
@@ -90,6 +91,14 @@ const cartSlice = createSlice({
       state.items = [];
       state.error = null;
     },
+    // Optimistic update for immediate UI feedback
+    updateQuantityOptimistic(state, action) {
+      const { itemId, quantity } = action.payload;
+      const item = state.items.find((item) => item._id === itemId);
+      if (item) {
+        item.quantity = quantity;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -122,15 +131,28 @@ const cartSlice = createSlice({
 
       // UPDATE
       .addCase(updateCartQuantity.pending, (state) => {
-        state.loading = true;
+        // Don't set loading to true - we want instant UI updates
+        // Optimistic update already happened, so we don't need loading state
       })
       .addCase(updateCartQuantity.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload?.items || [];
+        // Server response received - sync only if there's a mismatch
+        // This preserves optimistic updates while ensuring server sync
+        if (action.payload?.items) {
+          const serverItems = action.payload.items;
+          serverItems.forEach((serverItem) => {
+            const localItem = state.items.find((item) => item._id === serverItem._id);
+            if (localItem && localItem.quantity !== serverItem.quantity) {
+              // Only sync if quantities differ (server is source of truth)
+              localItem.quantity = serverItem.quantity;
+            }
+          });
+        }
+        state.error = null;
       })
       .addCase(updateCartQuantity.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
+        // Don't clear items on error - keep existing cart state
+        // Component will handle refetch if needed
       })
 
       // REMOVE
@@ -142,5 +164,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const { clearCart } = cartSlice.actions;
+export const { clearCart, updateQuantityOptimistic } = cartSlice.actions;
 export default cartSlice.reducer;
