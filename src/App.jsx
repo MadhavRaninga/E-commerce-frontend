@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SignIn from "./component/SignIn";
 import Signup from "./component/Signup";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { checkAuth } from "./Redux/Reducers/userSlice";
+import { getProducts } from "./Redux/Reducers/productSlice";
 
 import ForgotPassword from "./component/ForgotPassword";
 import VerifyOtp from "./component/VerifyOtp";
@@ -28,6 +29,7 @@ import MyOrders from "./component/MyOrder";
 
 const App = () => {
   const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.products);
 
   // Check authentication on app load
   useEffect(() => {
@@ -36,6 +38,13 @@ const App = () => {
       dispatch(checkAuth());
     }
   }, [dispatch]);
+
+  // Load products early so they're available immediately on all pages
+  useEffect(() => {
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   return (
     <>

@@ -9,14 +9,17 @@ import { toast } from "react-toastify";
 const Mens = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products } = useSelector((state) => state.products);
+  const { products, loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((state) => state.user);
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("");
 
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   // 🔹 Filter only Men's products
   const mensProducts = products.filter(
@@ -149,7 +152,12 @@ const Mens = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-              {sortedProducts.length > 0 ? (
+              {loading && products.length === 0 ? (
+                <div className="col-span-full text-center py-20">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+                  <p className="mt-4 text-gray-500">Loading products...</p>
+                </div>
+              ) : sortedProducts.length > 0 ? (
                 sortedProducts.map((product) => (
                   <Link
                     key={product._id}

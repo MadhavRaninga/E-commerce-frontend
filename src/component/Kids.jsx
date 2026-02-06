@@ -14,9 +14,12 @@ const Kids = () => {
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("");
 
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   // 🔹 Filter only Kids' products
   const kidsProducts = products.filter(

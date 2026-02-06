@@ -9,16 +9,18 @@ import { toast } from "react-toastify";
 const NewArrivals = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products = [] } = useSelector((state) => state.products);
+  const { products = [], loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((state) => state.user);
 
   const [filter, setFilter] = useState("all");
   const [visibleCount, setVisibleCount] = useState(9);
 
-  // Fetch products
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   // Filter products
   const filteredItems = useMemo(() => {

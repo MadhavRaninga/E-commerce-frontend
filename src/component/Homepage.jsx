@@ -14,9 +14,12 @@ const Homepage = () => {
   const { isAuth } = useSelector((state) => state.user);
   console.log("Redux products:", products);
 
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts())
-  }, [dispatch])
+    if (!products || products.length === 0) {
+      dispatch(getProducts())
+    }
+  }, [dispatch, products])
 
   return (
     <div className="bg-[#FAF9F6] text-gray-900">

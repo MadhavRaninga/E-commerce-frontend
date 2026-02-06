@@ -34,7 +34,8 @@ const Navbar = () => {
   const userEmail = user?.email || "";
 
   useEffect(() => {
-    // Ensure products are loaded once so navbar search works everywhere
+    // Products should be loaded in App.jsx, but ensure they're available for search
+    // Only fetch if products don't exist (avoid duplicate calls)
     if (!products || products.length === 0) {
       dispatch(getProducts());
     }
@@ -46,7 +47,7 @@ const Navbar = () => {
       dispatch(clearWishlist());
       dispatch(clearCart());
     }
-  }, [dispatch, isAuth, userEmail, products?.length, products]);
+  }, [dispatch, isAuth, userEmail]);
 
   const onProtectedNav = (path) => {
     if (!isAuth) {

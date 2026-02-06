@@ -9,14 +9,17 @@ import { toast } from "react-toastify";
 const Womens = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products } = useSelector((state) => state.products);
+  const { products, loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((state) => state.user);
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("");
 
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   // 🔹 Filter only Women's products
   const womensProducts = products.filter(

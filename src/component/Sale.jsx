@@ -9,12 +9,15 @@ import { toast } from "react-toastify";
 const Sale = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products } = useSelector((state) => state.products);
+  const { products, loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((state) => state.user);
 
+  // Only fetch if products don't exist (they should be loaded in App.jsx)
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (!products || products.length === 0) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products]);
 
   const saleProducts = products.filter(
     (product) => product.discount && product.discount > 0
