@@ -10,7 +10,7 @@ const Homepage = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
-  const { products } = useSelector((state) => state.products)
+  const { products, loading } = useSelector((state) => state.products)
   const { isAuth } = useSelector((state) => state.user);
   console.log("Redux products:", products);
 
@@ -20,6 +20,12 @@ const Homepage = () => {
       dispatch(getProducts())
     }
   }, [dispatch, products])
+  // Fetch only if not already in Redux (use cache so products show fast on revisit)
+  useEffect(() => {
+    if (products.length === 0 && !loading) {
+      dispatch(getProducts());
+    }
+  }, [dispatch, products.length, loading]);
 
   return (
     <div className="bg-[#FAF9F6] text-gray-900">
@@ -111,7 +117,11 @@ const Homepage = () => {
 
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {products.length !== 0 ? (
+            {loading ? (
+              <p className="col-span-full text-center py-16 text-gray-600 text-lg">
+                Loading products...
+              </p>
+            ) : products.length !== 0 ? (
               products.slice(15, 27).map((product) => (
                 <Link
                   to={`/product/${product._id}`}
@@ -131,6 +141,7 @@ const Homepage = () => {
                       src={product.image}
                       alt={product.name}
                       className="w-full h-80 object-cover"
+                      loading="lazy"
                     />
 
                     <div className="p-5">

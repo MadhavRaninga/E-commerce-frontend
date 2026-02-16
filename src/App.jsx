@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SignIn from "./component/SignIn";
 import Signup from "./component/Signup";
@@ -26,20 +26,24 @@ import Checkout from "./component/Checkout";
 import OrderSuccess from "./component/OrderSuccess";
 import OrderStatus from "./component/OrderStatus";
 import MyOrders from "./component/MyOrder";
+import ClothifyLoader from "./component/ClothifyLoader";
 
 const App = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
 
-  // Check authentication on app load
+  const [showLoader, setShowLoader] = useState(true);
+
+  // Check auth + prefetch products on app load
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       dispatch(checkAuth());
     }
+    dispatch(getProducts());
   }, [dispatch]);
 
-  // Load products early so they're available immediately on all pages
+  // Ensure products exist
   useEffect(() => {
     if (!products || products.length === 0) {
       dispatch(getProducts());
@@ -48,32 +52,72 @@ const App = () => {
 
   return (
     <>
+      {showLoader && (
+        <ClothifyLoader onFinish={() => setShowLoader(false)} />
+      )}
+
       <BrowserRouter>
+        <Navbar />
+
         <Routes>
-          
-          <Route path="/" element={<Homepage />}></Route>
-          <Route path="/login" element={<SignIn />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/forgotpassword" element={<ForgotPassword />}></Route>
-          <Route path="/verifyOtp" element={<VerifyOtp />}></Route>
-          <Route path="/resetPassword" element={<ResetPass />}></Route>
-          <Route path="/mens" element={<Mens />}></Route>
-          <Route path="/womens" element={<Womens />}></Route>
-          <Route path="/kids" element={<Kids />}></Route>
-          <Route path="/newarrival" element={<NewArrivals />}></Route>
-          <Route path="/sale" element={<Sale />}></Route>
-          <Route path="/navbar" element={<Navbar />}></Route>
-          <Route path="/product/:id"element={<ProtectedRoute> <ProductDetails/> </ProtectedRoute>}></Route>
-          <Route path="/cart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}></Route>
-          <Route path="/checkout" element={<ProtectedRoute> <Checkout /> </ProtectedRoute>}></Route>
-          <Route path="/wishlist" element={<ProtectedRoute> <Wishlist /> </ProtectedRoute>}></Route>
-          <Route path="/order-success/:id" element={<OrderSuccess/>}></Route>
-          <Route path="/orders/:id" element={<OrderStatus/>}></Route>
-          <Route path="/orders" element={<ProtectedRoute><MyOrders/></ProtectedRoute>}></Route>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/verifyOtp" element={<VerifyOtp />} />
+          <Route path="/resetPassword" element={<ResetPass />} />
+          <Route path="/mens" element={<Mens />} />
+          <Route path="/womens" element={<Womens />} />
+          <Route path="/kids" element={<Kids />} />
+          <Route path="/newarrival" element={<NewArrivals />} />
+          <Route path="/sale" element={<Sale />} />
 
-          <Route path="/footer" element={<Footer />}></Route>
+          <Route
+            path="/product/:id"
+            element={
+              <ProtectedRoute>
+                <ProductDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
 
+          <Route path="/order-success/:id" element={<OrderSuccess />} />
+          <Route path="/orders/:id" element={<OrderStatus />} />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
+
+        <Footer />
         <ToastContainer theme="dark" position="top-center" />
       </BrowserRouter>
     </>
