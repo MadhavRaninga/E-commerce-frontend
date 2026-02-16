@@ -30,11 +30,9 @@ import ClothifyLoader from "./component/ClothifyLoader";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.products);
-
   const [showLoader, setShowLoader] = useState(true);
 
-  // Check auth + prefetch products on app load
+  // Check auth + prefetch products on app load (don't wait for loader)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -42,13 +40,6 @@ const App = () => {
     }
     dispatch(getProducts());
   }, [dispatch]);
-
-  // Ensure products exist
-  useEffect(() => {
-    if (!products || products.length === 0) {
-      dispatch(getProducts());
-    }
-  }, [dispatch, products]);
 
   return (
     <>

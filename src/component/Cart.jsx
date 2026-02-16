@@ -5,7 +5,6 @@ import {
     updateCartQuantity,
     updateQuantityOptimistic
 } from "../Redux/Reducers/cartSlice";
-import Navbar from "../component/Navbar";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -55,8 +54,6 @@ const Cart = () => {
 
     return (
         <div className="bg-[#FAF9F6] min-h-screen">
-            <Navbar />
-
             <section className="max-w-6xl mx-auto px-6 py-20">
                 <h2 className="text-3xl font-semibold mb-10">Shopping Cart</h2>
 

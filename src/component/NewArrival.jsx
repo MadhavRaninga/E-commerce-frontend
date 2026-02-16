@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../component/Navbar";
-import Footer from "./Footer";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -43,7 +41,6 @@ const NewArrivals = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
 
       {/* ================= HERO ================= */}
       <section className="relative w-full">
@@ -161,8 +158,6 @@ const NewArrivals = () => {
           </div>
         )}
       </section>
-
-      <Footer />
     </div>
   );
 };

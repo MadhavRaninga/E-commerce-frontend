@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
 import { getMyOrders } from "../Redux/Reducers/orderSlice";
 
 const MyOrders = () => {
@@ -21,8 +20,6 @@ const MyOrders = () => {
 
   return (
     <>
-      <Navbar />
-
       <div className="max-w-4xl mx-auto px-6 py-10">
         <h2 className="text-2xl font-bold mb-6">My Orders</h2>
 

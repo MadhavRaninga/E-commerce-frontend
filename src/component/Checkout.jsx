@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
 import { placeOrder, clearOrderState } from "../Redux/Reducers/orderSlice";
 import { getCart } from "../Redux/Reducers/cartSlice";
 import { toast } from "react-toastify";
@@ -61,8 +59,6 @@ const Checkout = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
-
       <section className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Address / Payment (2/3 width) */}
         <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm">
@@ -185,8 +181,6 @@ const Checkout = () => {
           )}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };

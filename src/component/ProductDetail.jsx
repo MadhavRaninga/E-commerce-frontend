@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import Navbar from "../component/Navbar";
-import Footer from "./Footer";
 import { getProductById } from "../Redux/Reducers/productDetailSlice";
 import { addToCart } from "../Redux/Reducers/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../Redux/Reducers/wishlistSlice";
@@ -67,8 +65,6 @@ const ProductDetails = () => {
 
     return (
         <div className="bg-[#FAF9F6] min-h-screen">
-            <Navbar />
-
             <div className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-16">
 
                 {/* IMAGE SECTION */}
@@ -218,8 +214,6 @@ const ProductDetails = () => {
 
                 </div>
             </div>
-
-            <Footer />
         </div>
     );
 };

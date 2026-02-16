@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../component/Navbar";
-import Footer from "./Footer";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -25,7 +23,6 @@ const Sale = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
 
       {/* ================= SALE HERO ================= */}
       <section className="relative h-[60vh] bg-black">
@@ -138,8 +135,6 @@ const Sale = () => {
           )}
         </div>
       </section>
-
-      <Footer/>
     </div>
   );
 };

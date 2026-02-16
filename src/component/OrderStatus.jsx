@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Navbar from "../component/Navbar";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -86,7 +85,6 @@ const OrderStatus = () => {
   if (loading) {
     return (
       <div className="bg-[#FAF9F6] min-h-screen">
-        <Navbar />
         <section className="max-w-3xl mx-auto px-6 py-20">
           <div className="text-center">
             <p className="text-xl">Loading order details...</p>
@@ -114,7 +112,6 @@ const OrderStatus = () => {
   if (!order && !loading && error && error.includes("Order not found")) {
     return (
       <div className="bg-[#FAF9F6] min-h-screen">
-        <Navbar />
         <section className="max-w-3xl mx-auto px-6 py-20">
           <div className="text-center">
             <h2 className="text-3xl font-semibold mb-6">Order Status</h2>
@@ -145,8 +142,6 @@ const OrderStatus = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
-
       <section className="max-w-3xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-semibold mb-12">Order Status</h2>
 

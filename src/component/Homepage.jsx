@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
-import Navbar from "../component/Navbar";
-import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -29,9 +27,6 @@ const Homepage = () => {
 
   return (
     <div className="bg-[#FAF9F6] text-gray-900">
-
-      {/* ================= NAVBAR ================= */}
-      <Navbar />
 
       {/* ================= HERO ================= */}
       <section className="relative h-[93vh]">
@@ -242,9 +237,6 @@ const Homepage = () => {
 
         </div>
       </section>
-
-      {/* ================= FOOTER ================= */}
-      <Footer />
     </div>
   );
 };

@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../component/Navbar";
 import { getProducts } from "../Redux/Reducers/productSlice";
-import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -59,7 +57,6 @@ const Kids = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
 
       {/* ================= HERO ================= */}
       <section className="relative h-[55vh]">
@@ -233,9 +230,6 @@ const Kids = () => {
           </div>
         </div>
       </section>
-
-      {/* ================= FOOTER ================= */}
-      <Footer />
     </div>
   );
 };

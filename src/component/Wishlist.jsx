@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
 import { hydrateWishlist, removeFromWishlist } from "../Redux/Reducers/wishlistSlice";
 import { Link } from "react-router-dom";
 
@@ -16,8 +14,6 @@ const Wishlist = () => {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen">
-      <Navbar />
-
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="flex items-center justify-between mb-10">
           <h2 className="text-3xl font-semibold">My Wishlist</h2>
@@ -64,8 +60,6 @@ const Wishlist = () => {
           </div>
         )}
       </section>
-
-      <Footer />
     </div>
   );
 };
