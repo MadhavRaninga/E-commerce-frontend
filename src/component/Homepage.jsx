@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const Homepage = () => {
 
@@ -112,10 +113,8 @@ const Homepage = () => {
 
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {loading ? (
-              <p className="col-span-full text-center py-16 text-gray-600 text-lg">
-                Loading products...
-              </p>
+            {loading && products.length === 0 ? (
+              <ProductCardSkeleton count={12} />
             ) : products.length !== 0 ? (
               products.slice(15, 27).map((product) => (
                 <Link

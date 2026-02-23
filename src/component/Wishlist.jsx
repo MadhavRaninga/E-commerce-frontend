@@ -38,6 +38,7 @@ const Wishlist = () => {
                   <img
                     src={product.image?.url || product.image}
                     alt={product.name || product.title}
+                    loading="lazy"
                     className="w-full h-80 object-cover"
                   />
                 </Link>

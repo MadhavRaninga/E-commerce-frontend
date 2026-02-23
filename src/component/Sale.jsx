@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const Sale = () => {
   const dispatch = useDispatch();
@@ -65,7 +66,9 @@ const Sale = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          {saleProducts.length > 0 ? (
+          {loading && products.length === 0 ? (
+            <ProductCardSkeleton count={12} />
+          ) : saleProducts.length > 0 ? (
             saleProducts.map((product) => {
               const discountedPrice = product.price - Math.round((product.price * product.discount) / 100);
               
@@ -89,6 +92,7 @@ const Sale = () => {
                     <img
                       src={product.image}
                       alt={product.name}
+                      loading="lazy"
                       className="w-full h-80 object-cover group-hover:scale-110 transition duration-500"
                     />
 

@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const Womens = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products, loading } = useSelector((state) => state.products);
+  const { products = [], loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((state) => state.user);
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("");
@@ -150,7 +151,9 @@ const Womens = () => {
 
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-              {sortedProducts.length > 0 ? (
+              {loading && products.length === 0 ? (
+                <ProductCardSkeleton count={9} />
+              ) : sortedProducts.length > 0 ? (
                 sortedProducts.map((product) => (
                   <Link
                     to={`/product/${product._id}`}
@@ -171,6 +174,7 @@ const Womens = () => {
                         <img
                           src={product.image}
                           alt={product.name}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                         />
 

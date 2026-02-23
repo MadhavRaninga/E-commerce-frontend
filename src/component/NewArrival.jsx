@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const NewArrivals = () => {
   const dispatch = useDispatch();
@@ -101,7 +102,9 @@ const NewArrivals = () => {
       {/* ================= PRODUCTS GRID ================= */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[400px]">
-          {visibleItems.map((item) => (
+          {loading && products.length === 0 ? (
+            <ProductCardSkeleton count={9} />
+          ) : visibleItems.map((item) => (
             <div
               key={item._id}
               className={`relative group overflow-hidden bg-white rounded-xl cursor-pointer transition-all duration-500
@@ -123,6 +126,7 @@ const NewArrivals = () => {
                 <img
                   src={item.image?.url || item.image}
                   alt={item.title}
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                 />
 

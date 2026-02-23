@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../Redux/Reducers/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const Mens = () => {
   const dispatch = useDispatch();
@@ -150,10 +151,7 @@ const Mens = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
               {loading && products.length === 0 ? (
-                <div className="col-span-full text-center py-20">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-                  <p className="mt-4 text-gray-500">Loading products...</p>
-                </div>
+                <ProductCardSkeleton count={9} />
               ) : sortedProducts.length > 0 ? (
                 sortedProducts.map((product) => (
                   <Link
@@ -176,6 +174,7 @@ const Mens = () => {
                       <img
                         src={product.image}
                         alt={product.name}
+                        loading="lazy"
                         className="w-full h-80 object-cover group-hover:scale-110 transition duration-500"
                       />
 
